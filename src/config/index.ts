@@ -6,6 +6,7 @@ dotenv.config({path: path.join(process.cwd(), ".env")})
 
 
 const config = {
+    connectionString: process.env.CONNECTIONSTRING,
     port: process.env.PORT,
 }
 
