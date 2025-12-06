@@ -12,7 +12,7 @@ router.get("/:vehicleId", vehiclesController.vehiclesSpecificGet)
 
 router.put("/:vehicleId",auth('admin'), vehiclesController.vehiclesUpdate)
 
-router.delete("/:vehicleId", vehiclesController.vehiclesDelete)
+router.delete("/:vehicleId",auth('admin'), vehiclesController.vehiclesDelete)
 
 export const vehiclesRoutes = router;
 
