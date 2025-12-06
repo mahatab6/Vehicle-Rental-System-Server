@@ -8,4 +8,6 @@ router.get('/',auth('admin'), userController.usersGet)
 
 router.put('/:userId',auth('admin', 'customer'), userController.usersPut)
 
+router.delete('/:userId', userController.userDelete)
+
 export const userRouter = router;

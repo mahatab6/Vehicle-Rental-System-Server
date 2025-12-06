@@ -18,7 +18,7 @@ const usersGet = async (req:Request, res:Response) => {
     }
 }
 
-const usersPut = async (req:Request, res: Response) => {
+const usersPut = async (req:Request, res:Response) => {
 
     try {
        const result = await userService.usersPut(req.body, req.params.userId as string, req.payloadData as JwtPayload);
@@ -35,7 +35,31 @@ const usersPut = async (req:Request, res: Response) => {
     }
 }
 
+const userDelete = async (req:Request, res:Response) => {
+    try {
+        const result = await userService.userDelete(req.params.userId as string);
+        if(result === "active"){
+            res.status(200).json({
+                success: false,
+                message: "This user active"
+            })
+        } else{
+            res.status(200).json({
+                success: true,
+                message: "User deleted successfully"
+            })
+        }
+
+    } catch (error:any) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 export const userController = {
     usersGet,
-    usersPut
+    usersPut,
+    userDelete
 }

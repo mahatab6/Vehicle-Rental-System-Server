@@ -23,8 +23,20 @@ const usersPut = async (payload:Record<string, unknown>, id:string, payloadData:
     return result.rows[0]
 }
 
+const userDelete = async (id:string) => {
+
+    const checkUser = await pool.query(`SELECT * FROM bookings WHERE customer_id=$1`, [id]);
+    if(checkUser?.rows[0]?.status === "active"){
+        return "active"
+    } else{
+        const result = await pool.query(`DELETE FROM users WHERE id=$1`, [id]);
+        return result.rowCount
+    }
+}
+
 
 export const userService = {
     usersGet,
-    usersPut
+    usersPut,
+    userDelete
 }
