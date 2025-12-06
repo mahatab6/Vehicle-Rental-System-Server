@@ -25,6 +25,8 @@ const auth = (...role:string[]) => {
                 })
             }
             
+            req.payloadData = decoded;
+
             next();
 
         } catch (error:any) {

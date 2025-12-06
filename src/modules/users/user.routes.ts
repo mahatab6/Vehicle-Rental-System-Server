@@ -6,4 +6,6 @@ const router = Router();
 
 router.get('/',auth('admin'), userController.usersGet)
 
+router.put('/:userId',auth('admin', 'customer'), userController.usersPut)
+
 export const userRouter = router;
