@@ -102,7 +102,7 @@ const bookingsGet = async (payloadData: JwtPayload) => {
         vehicle: {
           vehicle_name: item.vehicle_name,
           registration_number: item.registration_number,
-          type: item.type
+          type: item.type,
         },
       };
     });
@@ -111,7 +111,69 @@ const bookingsGet = async (payloadData: JwtPayload) => {
   }
 };
 
+const bookingsUpdate = async (
+  payload: Record<string, unknown>,
+  id: string,
+  payloadData: JwtPayload
+) => {
+  const { status } = payload;
+  const isAdmin = payloadData?.role === "admin";
+  const isCustomer = payloadData?.role === "customer";
+  const bookingData = await pool.query(`SELECT * FROM bookings WHERE id=$1`, [
+    id,
+  ]);
+  const today = new Date();
+
+
+
+  if (isCustomer && today < bookingData?.rows[0]?.rent_start_date) {
+    const result = await pool.query(
+      `UPDATE bookings SET status=$1 WHERE id=$2 RETURNING id, customer_id, vehicle_id, TO_CHAR(rent_start_date, 'YYYY-MM-DD') AS rent_start_date, TO_CHAR(rent_end_date, 'YYYY-MM-DD') AS rent_end_date, total_price, status`,
+      [status, id]
+    );
+    return { message: "Booking cancelled successfully", result };
+  } else if (isAdmin && status === "returned") {
+    const bookingUpdate = await pool.query(
+      `UPDATE bookings SET status=$1 WHERE id=$2 RETURNING id, customer_id, vehicle_id, TO_CHAR(rent_start_date, 'YYYY-MM-DD') AS rent_start_date, TO_CHAR(rent_end_date, 'YYYY-MM-DD') AS rent_end_date, total_price, status`,
+      [status, id]
+    );
+
+    let vehicleStatus = "available";
+
+    const vehicleUpdate = await pool.query(
+      `UPDATE vehicles SET availability_status=$1 WHERE id=$2 RETURNING availability_status`,
+      [vehicleStatus, bookingUpdate?.rows[0]?.vehicle_id]
+    );
+
+    const result = {
+      ...bookingUpdate.rows[0],
+      vehicle:  vehicleUpdate.rows[0]
+    }
+
+    return { message: "Booking marked as returned. Vehicle is now available", result };
+  } else if( today > bookingData?.rows[0]?.rent_end_date && status !== "returned"){
+    
+    let bookingStatus = "returned"
+    const bookingUpdate = await pool.query(
+      `UPDATE bookings SET status=$1 WHERE id=$2`,
+      [bookingStatus, id]
+    );
+
+    let vehicleStatus = "available";
+
+    const vehicleUpdate = await pool.query(
+      `UPDATE vehicles SET availability_status=$1 WHERE id=$2 `,
+      [vehicleStatus, bookingUpdate?.rows[0]?.vehicle_id]
+    );
+
+    return { message: "You Booking update autometic. Vehicle is now available" };
+  } else{
+    return {message: "your booking not found"}
+  }
+};
+
 export const bookingsService = {
   bookingsPost,
   bookingsGet,
+  bookingsUpdate,
 };

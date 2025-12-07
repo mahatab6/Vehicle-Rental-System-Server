@@ -43,7 +43,24 @@ const bookingsGet = async (req: Request, res: Response) => {
   }
 };
 
+const bookingsUpdate = async (req: Request, res: Response) => {
+    try {
+        const result = await bookingsService.bookingsUpdate(req.body,req.params.bookingId as string, req.payloadData as JwtPayload);
+        res.status(200).json({
+          success: true,
+          message: result?.message,
+          data: result?.result.rows
+        })
+    } catch (error:any) {
+        res.status(500).json({
+        success: false,
+        message: error.message,
+    });
+    }
+}
+
 export const bookingsController = {
   bookingsPost,
   bookingsGet,
+  bookingsUpdate
 };
