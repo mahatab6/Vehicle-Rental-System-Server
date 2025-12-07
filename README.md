@@ -6,7 +6,7 @@ The architecture is based on a modular pattern with a clear separation of concer
 
 ## Live URL
 
-The live application is deployed and available here: [XXXXXXXXXXXXXXXXX](XXXXXXXXXXXXXXXXX)
+The live application is deployed and available here: https://vehicle-rental-system-gamma.vercel.app/
 
 ## Features
 
@@ -42,7 +42,7 @@ To run this project locally, follow these steps:
 Clone the project repository to your local machine using the following command:
 
 ```bash
-git clone <YOUR_REPOSITORY_URL_HERE>
+git clone <https://github.com/mahatab6/Vehicle-Rental-System-Server>
 cd vehicle-rental-system
 
 ```
